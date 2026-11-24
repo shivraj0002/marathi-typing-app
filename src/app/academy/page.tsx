@@ -38,9 +38,7 @@ export default function AcademyPage() {
                 {stage.lessons.map((lesson) => {
                   const isUnlocked = effectiveUnlocked.includes(lesson.id);
                   const score = effectiveScores[lesson.id];
-                  const isCompleted = Boolean(
-                    score && score.bestAccuracy >= lesson.minAccuracy && score.bestWpm >= lesson.minWpm
-                  );
+                  const isCompleted = Boolean(score && score.passed);
 
                   return (
                     <div

@@ -21,8 +21,12 @@ export default function StatsPage() {
   const completedCount = Object.values(effectiveLessonScores).filter((s) => s.passed).length;
   const passedCount = effectiveExamHistory.filter((e) => e.passed).length;
   const sortedWeak = Object.values(effectiveWeakKeys)
-    .filter((k) => k.missCount > 0 && k.totalAttempts > 0)
-    .sort((a, b) => b.missCount - a.missCount || b.totalAttempts - a.totalAttempts);
+    .filter((k) => k.missCount > 0 && k.totalAttempts > 0 && k.char.trim().length > 0)
+    .sort((a, b) => {
+      const rateA = a.missCount / Math.max(1, a.totalAttempts);
+      const rateB = b.missCount / Math.max(1, b.totalAttempts);
+      return rateB - rateA || b.missCount - a.missCount || b.totalAttempts - a.totalAttempts;
+    });
 
   return (
     <>
