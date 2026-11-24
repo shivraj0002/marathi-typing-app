@@ -198,6 +198,7 @@ export function useInscriptEngine({
       // Ignore standard browser shortcuts
       if (e.ctrlKey || e.metaKey || e.altKey) return;
 
+      setIsShiftDown(e.shiftKey);
       setActiveCode(e.code);
 
       // Backspace handling: step back within active multi-keystroke grapheme first, otherwise previous grapheme
@@ -216,7 +217,7 @@ export function useInscriptEngine({
 
       if (currentIndex >= targetChars.length) return;
 
-      const marathiChar = translateKey(e.code, e.shiftKey || isShiftDown);
+      const marathiChar = translateKey(e.code, e.shiftKey);
       if (!marathiChar) return;
 
       e.preventDefault();
@@ -228,6 +229,7 @@ export function useInscriptEngine({
         setStartTime(now);
       }
 
+      const expectedTargetChar = getExpectedTargetChar(remainingGrapheme);
       const { isCorrect, consumedLength } = matchGraphemeKeystroke(remainingGrapheme, marathiChar);
 
       keystrokeCountRef.current += 1;
@@ -242,7 +244,7 @@ export function useInscriptEngine({
       }
 
       if (onKeyProcessedRef.current) {
-        onKeyProcessedRef.current(marathiChar, isCorrect);
+        onKeyProcessedRef.current(expectedTargetChar ?? targetChar ?? marathiChar, isCorrect);
       }
 
       const nextSteps: ActiveGraphemeStep[] = [
@@ -276,8 +278,8 @@ export function useInscriptEngine({
       subOffset,
       currentGrapheme,
       remainingGrapheme,
+      targetChar,
       targetChars.length,
-      isShiftDown,
       soundEnabled,
       finishSession,
     ]
@@ -290,14 +292,21 @@ export function useInscriptEngine({
     setActiveCode(null);
   }, []);
 
+  const handleBlur = useCallback(() => {
+    setIsShiftDown(false);
+    setActiveCode(null);
+  }, []);
+
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", handleBlur);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", handleBlur);
     };
-  }, [handleKeyDown, handleKeyUp]);
+  }, [handleKeyDown, handleKeyUp, handleBlur]);
 
   const metrics = calculateMetrics({
     charCount: keystrokeCount,

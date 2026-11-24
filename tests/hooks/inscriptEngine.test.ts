@@ -150,5 +150,18 @@ describe("InScript Typing Engine Logic", () => {
     expect(passedHtml).toContain("24");
     expect(passedHtml).toContain("22");
     expect(passedHtml).toContain("98%");
+    expect(passedHtml).toContain("पुढील टप्प्यासाठी पात्र आहात");
+
+    const customSubtitleHtml = renderToStaticMarkup(
+      React.createElement(ResultModal, {
+        isOpen: true,
+        metrics: { ...metrics, accuracy: 98 },
+        title: "स्प्रिंट पूर्ण झाला! (Sprint Complete)",
+        subtitle: "आपला स्प्रिंट निकाल खालीलप्रमाणे आहे.",
+        onRetry: () => {},
+      })
+    );
+    expect(customSubtitleHtml).toContain("आपला स्प्रिंट निकाल खालीलप्रमाणे आहे.");
+    expect(customSubtitleHtml).not.toContain("पुढील टप्प्यासाठी पात्र आहात");
   });
 });

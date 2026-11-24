@@ -10,6 +10,7 @@ export interface ResultModalProps {
   onRetry: () => void;
   onNext?: () => void;
   title?: string;
+  subtitle?: string;
   isPassed?: boolean;
 }
 
@@ -20,6 +21,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
   onRetry,
   onNext,
   title = "सराव पूर्ण झाला! (Practice Completed)",
+  subtitle,
   isPassed = true,
 }) => {
   if (!isOpen) return null;
@@ -34,9 +36,10 @@ export const ResultModal: React.FC<ResultModalProps> = ({
         )}
         <h2 className="text-2xl font-bold text-slate-100">{title}</h2>
         <p className="text-sm text-slate-400 mt-1">
-          {isPassed
-            ? "छान प्रयत्न! आपण पुढील टप्प्यासाठी पात्र आहात."
-            : "पुन्हा सराव करून ९५% पेक्षा जास्त अचूकता मिळवा."}
+          {subtitle ??
+            (isPassed
+              ? "छान प्रयत्न! आपण पुढील टप्प्यासाठी पात्र आहात."
+              : "पुन्हा सराव करून ९५% पेक्षा जास्त अचूकता मिळवा.")}
         </p>
 
         <div className="grid grid-cols-2 gap-3 w-full my-6">

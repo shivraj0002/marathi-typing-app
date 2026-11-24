@@ -37,6 +37,7 @@ describe("Academy Progression Logic", () => {
         lessonId: lesson.id,
         bestWpm: grossWpm,
         bestAccuracy: accuracy,
+        passed,
         completedAt: "2026-11-24T12:00:00Z",
       });
       if (passed) {
@@ -90,6 +91,7 @@ describe("Academy Progression Logic", () => {
           lessonId: "stage-1-lesson-1",
           bestWpm: 10,
           bestAccuracy: 90,
+          passed: false,
           completedAt: "2026-11-24T12:00:00Z",
         },
       },

@@ -69,25 +69,40 @@ describe("useTypingStore", () => {
     ]);
   });
 
-  it("records lesson scores while preserving highest WPM and accuracy", () => {
+  it("records lesson scores while preserving highest WPM, accuracy, and passed latch", () => {
     const { recordLessonScore } = useTypingStore.getState();
     recordLessonScore({
       lessonId: "stage-1-lesson-1",
       bestWpm: 25,
       bestAccuracy: 94,
+      passed: false,
       completedAt: "2026-11-24T10:00:00Z",
     });
+    expect(useTypingStore.getState().lessonScores["stage-1-lesson-1"].passed).toBe(false);
+
     recordLessonScore({
       lessonId: "stage-1-lesson-1",
       bestWpm: 20,
       bestAccuracy: 98,
+      passed: true,
       completedAt: "2026-11-24T11:00:00Z",
+    });
+    expect(useTypingStore.getState().lessonScores["stage-1-lesson-1"].passed).toBe(true);
+
+    // Subsequent failed attempt should not revoke passed status
+    recordLessonScore({
+      lessonId: "stage-1-lesson-1",
+      bestWpm: 18,
+      bestAccuracy: 91,
+      passed: false,
+      completedAt: "2026-11-24T12:00:00Z",
     });
 
     const saved = useTypingStore.getState().lessonScores["stage-1-lesson-1"];
     expect(saved.bestWpm).toBe(25);
     expect(saved.bestAccuracy).toBe(98);
-    expect(saved.completedAt).toBe("2026-11-24T11:00:00Z");
+    expect(saved.passed).toBe(true);
+    expect(saved.completedAt).toBe("2026-11-24T12:00:00Z");
   });
 
   it("records exam history in reverse chronological order capped at 50 entries", () => {

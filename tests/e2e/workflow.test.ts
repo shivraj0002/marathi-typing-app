@@ -82,6 +82,7 @@ describe("Marathi Typing App End-to-End Workflow Verification", () => {
       lessonId: firstLesson.id,
       bestWpm: 20,
       bestAccuracy: 98,
+      passed: true,
       completedAt: "2026-11-24T12:00:00Z",
     });
     const nextId = getNextLessonId(firstLesson.id);

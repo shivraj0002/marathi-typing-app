@@ -58,6 +58,7 @@ export interface LessonScore {
   lessonId: string;
   bestWpm: number;
   bestAccuracy: number;
+  passed: boolean;
   completedAt: string;
 }
 
@@ -117,10 +118,11 @@ export const useTypingStore = create<TypingStoreState>()(
           const current = state.lessonScores[score.lessonId];
           const bestWpm = current ? Math.max(current.bestWpm, score.bestWpm) : score.bestWpm;
           const bestAccuracy = current ? Math.max(current.bestAccuracy, score.bestAccuracy) : score.bestAccuracy;
+          const passed = Boolean(current?.passed || score.passed);
           return {
             lessonScores: {
               ...state.lessonScores,
-              [score.lessonId]: { ...score, bestWpm, bestAccuracy },
+              [score.lessonId]: { ...score, bestWpm, bestAccuracy, passed },
             },
           };
         }),

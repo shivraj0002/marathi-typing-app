@@ -130,6 +130,7 @@ export default function SprintPage() {
           isOpen={engine.isFinished}
           metrics={engine.metrics}
           title="स्प्रिंट पूर्ण झाला! (Sprint Complete)"
+          subtitle="आपला स्प्रिंट निकाल खालीलप्रमाणे आहे."
           onRetry={handleRestart}
         />
       </main>

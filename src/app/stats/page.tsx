@@ -18,7 +18,7 @@ export default function StatsPage() {
   const effectiveExamHistory = mounted ? examHistory : [];
   const effectiveWeakKeys = mounted ? weakKeys : {};
 
-  const completedCount = Object.keys(effectiveLessonScores).length;
+  const completedCount = Object.values(effectiveLessonScores).filter((s) => s.passed).length;
   const passedCount = effectiveExamHistory.filter((e) => e.passed).length;
   const sortedWeak = Object.values(effectiveWeakKeys)
     .filter((k) => k.missCount > 0 && k.totalAttempts > 0)

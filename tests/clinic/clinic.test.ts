@@ -38,8 +38,9 @@ describe("Weak Key Clinic Generator", () => {
     expect(drill.split(" ")).toHaveLength(20);
   });
 
-  it("selects top 5 most frequently missed characters sorted descending", () => {
+  it("selects top 5 weakest characters sorted descending by error rate and ignores whitespace", () => {
     const top = getTopWeakChars({
+      " ": { char: " ", missCount: 10, totalAttempts: 10 },
       क: { char: "क", missCount: 0, totalAttempts: 10 },
       ळ: { char: "ळ", missCount: 9, totalAttempts: 12 },
       ख: { char: "ख", missCount: 4, totalAttempts: 8 },
@@ -49,7 +50,8 @@ describe("Weak Key Clinic Generator", () => {
       ध: { char: "ध", missCount: 5, totalAttempts: 7 },
     });
 
-    expect(top).toEqual(["ळ", "ज्ञ", "झ", "ध", "ख"]);
+    expect(top).toEqual(["ळ", "ध", "ज्ञ", "झ", "ख"]);
+    expect(top).not.toContain(" ");
   });
 
   it("renders ClinicPage with hydration-safe SSR fallback even when weakKeys exist in store", () => {

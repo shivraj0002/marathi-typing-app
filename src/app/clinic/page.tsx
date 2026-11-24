@@ -108,6 +108,7 @@ export default function ClinicPage() {
           isOpen={engine.isFinished}
           metrics={engine.metrics}
           title="क्लिनिक सराव पूर्ण! (Clinic Completed)"
+          subtitle="आपला क्लिनिक सराव पूर्ण झाला आहे."
           onRetry={handleRefresh}
         />
       </main>

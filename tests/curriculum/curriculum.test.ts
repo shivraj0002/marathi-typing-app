@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { STAGES, getNextLessonId } from "@/lib/curriculum/stages";
 import { COMMON_MARATHI_WORDS } from "@/lib/curriculum/words";
 import { EXAM_PASSAGES_30_WPM, EXAM_PASSAGES_40_WPM } from "@/lib/curriculum/examPassages";
+import { IN_SCRIPT_KEYS } from "@/lib/inscript/keymap";
 
 describe("Curriculum & Exam Dataset", () => {
   it("contains 6 complete stages with valid lesson data", () => {
@@ -44,20 +45,30 @@ describe("Curriculum & Exam Dataset", () => {
   it("contains valid passages for 30 and 40 WPM exams", () => {
     expect(EXAM_PASSAGES_30_WPM.length).toBeGreaterThanOrEqual(2);
     expect(EXAM_PASSAGES_40_WPM.length).toBeGreaterThanOrEqual(2);
-    expect(EXAM_PASSAGES_30_WPM[0].text.length).toBeGreaterThan(500);
 
     EXAM_PASSAGES_30_WPM.forEach((passage) => {
       expect(passage.targetWpm).toBe(30);
       expect(passage.durationMinutes).toBe(7);
-      expect(passage.wordCount).toBeGreaterThan(0);
-      expect(passage.text.length).toBeGreaterThan(400);
+      expect(passage.wordCount).toBeGreaterThanOrEqual(200);
+      expect(passage.text.length).toBeGreaterThanOrEqual(1050);
     });
 
     EXAM_PASSAGES_40_WPM.forEach((passage) => {
       expect(passage.targetWpm).toBe(40);
       expect(passage.durationMinutes).toBe(7);
-      expect(passage.wordCount).toBeGreaterThan(0);
-      expect(passage.text.length).toBeGreaterThan(400);
+      expect(passage.wordCount).toBeGreaterThanOrEqual(270);
+      expect(passage.text.length).toBeGreaterThanOrEqual(1400);
+    });
+    const inScriptChars = new Set<string>();
+    Object.values(IN_SCRIPT_KEYS).forEach((k) => {
+      for (const ch of k.normal) inScriptChars.add(ch);
+      for (const ch of k.shifted) inScriptChars.add(ch);
+    });
+
+    [...EXAM_PASSAGES_30_WPM, ...EXAM_PASSAGES_40_WPM].forEach((passage) => {
+      for (const ch of passage.text.normalize("NFC")) {
+        expect(inScriptChars.has(ch)).toBe(true);
+      }
     });
   });
 });

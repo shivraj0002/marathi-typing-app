@@ -23,15 +23,19 @@ function shuffleWords(items: string[]): string[] {
 }
 
 /**
- * Returns the top `limit` most frequently missed characters sorted descending by missCount.
+ * Returns the top `limit` weakest characters sorted descending by error rate.
  */
 export function getTopWeakChars(
   weakKeys: Record<string, KeyMistakeRecord>,
   limit = 5
 ): string[] {
   return Object.values(weakKeys)
-    .filter((k) => k.missCount > 0)
-    .sort((a, b) => b.missCount - a.missCount || b.totalAttempts - a.totalAttempts)
+    .filter((k) => k.missCount > 0 && k.char.trim().length > 0)
+    .sort((a, b) => {
+      const rateA = a.missCount / Math.max(1, a.totalAttempts);
+      const rateB = b.missCount / Math.max(1, b.totalAttempts);
+      return rateB - rateA || b.missCount - a.missCount || b.totalAttempts - a.totalAttempts;
+    })
     .slice(0, limit)
     .map((k) => k.char);
 }

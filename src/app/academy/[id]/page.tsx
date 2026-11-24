@@ -38,6 +38,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         lessonId: lesson.id,
         bestWpm: metrics.grossWpm,
         bestAccuracy: metrics.accuracy,
+        passed,
         completedAt: new Date().toISOString(),
       });
       if (passed) {
