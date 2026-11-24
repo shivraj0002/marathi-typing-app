@@ -5,11 +5,15 @@ import Link from "next/link";
 import { Header } from "@/components/common/Header";
 import { STAGES } from "@/lib/curriculum/stages";
 import { useTypingStore } from "@/lib/store/useTypingStore";
+import { useMounted } from "@/hooks/useMounted";
 import { Lock, CheckCircle2, Play } from "lucide-react";
 
 /** 6-Stage Marathi InScript curriculum roadmap showing locked/unlocked lessons and best scores. */
 export default function AcademyPage() {
+  const mounted = useMounted();
   const { unlockedLessons, lessonScores } = useTypingStore();
+  const effectiveUnlocked = mounted ? unlockedLessons : ["stage-1-lesson-1"];
+  const effectiveScores = mounted ? lessonScores : {};
 
   return (
     <>
@@ -32,8 +36,11 @@ export default function AcademyPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {stage.lessons.map((lesson) => {
-                  const isUnlocked = unlockedLessons.includes(lesson.id);
-                  const score = lessonScores[lesson.id];
+                  const isUnlocked = effectiveUnlocked.includes(lesson.id);
+                  const score = effectiveScores[lesson.id];
+                  const isCompleted = Boolean(
+                    score && score.bestAccuracy >= lesson.minAccuracy && score.bestWpm >= lesson.minWpm
+                  );
 
                   return (
                     <div
@@ -49,7 +56,7 @@ export default function AcademyPage() {
                           <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">
                             लक्ष्य: {lesson.minWpm} WPM
                           </span>
-                          {score ? (
+                          {isCompleted ? (
                             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                           ) : !isUnlocked ? (
                             <Lock className="w-3.5 h-3.5 text-slate-500" />

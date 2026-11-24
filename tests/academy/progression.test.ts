@@ -66,7 +66,8 @@ describe("Academy Progression Logic", () => {
     expect(useTypingStore.getState().unlockedLessons).toContain("stage-2-lesson-1");
   });
 
-  it("renders Header with all navigation routes and sound control", () => {
+  it("renders Header with accessible navigation routes and hydration-safe SSR sound control", () => {
+    useTypingStore.setState({ soundEnabled: false });
     const html = renderToStaticMarkup(React.createElement(Header));
     expect(html).toContain("मराठी टायपिंग");
     expect(html).toContain("InScript Academy");
@@ -75,10 +76,24 @@ describe("Academy Progression Logic", () => {
     expect(html).toContain("/exam");
     expect(html).toContain("/clinic");
     expect(html).toContain("/stats");
+    expect(html).toContain('aria-label="अकॅडमी (Academy)"');
+    expect(html).toContain('title="परीक्षा (GCC-TBC Exam)"');
+    // Before client mount, Header falls back to SSR default (soundEnabled=true) to avoid hydration mismatch
     expect(html).toContain("Mute Sound");
   });
 
   it("renders AcademyPage with all 6 stages, unlocked first lesson, and locked subsequent lessons", () => {
+    useTypingStore.setState({
+      unlockedLessons: ["stage-1-lesson-1", "stage-1-lesson-2"],
+      lessonScores: {
+        "stage-1-lesson-1": {
+          lessonId: "stage-1-lesson-1",
+          bestWpm: 10,
+          bestAccuracy: 90,
+          completedAt: "2026-11-24T12:00:00Z",
+        },
+      },
+    });
     const html = renderToStaticMarkup(React.createElement(AcademyPage));
     expect(html).toContain("मराठी टायपिंग अभ्यासक्रम");
     expect(html).toContain("Stage 1: Home Row Foundations");
@@ -87,5 +102,6 @@ describe("Academy Progression Logic", () => {
     expect(html).not.toContain("/academy/stage-1-lesson-2");
     expect(html).toContain("सुरू करा");
     expect(html).toContain("लॉक केलेले");
+    expect(html).toContain("पूर्ण केलेले नाही");
   });
 });

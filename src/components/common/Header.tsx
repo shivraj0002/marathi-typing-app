@@ -5,11 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { GraduationCap, Zap, Award, BarChart3, Volume2, VolumeX, Stethoscope } from "lucide-react";
 import { useTypingStore } from "@/lib/store/useTypingStore";
+import { useMounted } from "@/hooks/useMounted";
 
 /** Global navigation header with active route highlighting, branding, and sound toggle. */
 export const Header: React.FC = () => {
   const pathname = usePathname();
+  const mounted = useMounted();
   const { soundEnabled, toggleSound } = useTypingStore();
+  const effectiveSoundEnabled = mounted ? soundEnabled : true;
 
   const navItems = [
     { href: "/academy", label: "अकॅडमी (Academy)", icon: GraduationCap },
@@ -40,6 +43,8 @@ export const Header: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-label={item.label}
+                title={item.label}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition ${
                   isActive
                     ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
@@ -56,11 +61,11 @@ export const Header: React.FC = () => {
         <button
           type="button"
           onClick={toggleSound}
-          aria-label={soundEnabled ? "Mute Sound" : "Enable Sound"}
+          aria-label={effectiveSoundEnabled ? "Mute Sound" : "Enable Sound"}
           className="p-2 rounded-lg border border-slate-800 hover:bg-slate-900 text-slate-400 hover:text-slate-200 transition"
-          title={soundEnabled ? "Mute Sound" : "Enable Sound"}
+          title={effectiveSoundEnabled ? "Mute Sound" : "Enable Sound"}
         >
-          {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4" />}
+          {effectiveSoundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4" />}
         </button>
       </div>
     </header>
